@@ -1,0 +1,48 @@
+
+* {
+  font-size: 32px;
+  font-family: Arial, Sans-serif;
+}
+
+p {
+  text-align: center;
+}
+
+#savedTimes {
+  color: #666666;
+}
+
+#timer, #todayCount {
+  font-size: 36px;
+  font-weight: bold;
+}
+
+.count {
+  background: #ddffee;
+  padding: 10px;
+  color: #000000;
+}
+
+a {
+  color: #ffffff;
+  font-size: 50px;
+  background: #3498db;
+  padding: 10px 100px 10px 100px;
+  text-decoration: none;
+}
+
+#startBtn {
+  background: #339966;
+}
+
+#stopBtn {
+  background: #993333;
+}
+
+#startBtn:hover {
+  background: #33cc66;
+}
+
+#stopBtn:hover {
+  background: #cc3333;
+}
