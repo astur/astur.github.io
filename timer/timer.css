@@ -17,16 +17,23 @@ p {
   font-weight: bold;
 }
 
-.count {
+#count {
   background: #ddffee;
   padding: 10px;
   color: #000000;
 }
 
-a {
+#resetBtn {
+  color: #ffffff;
+  font-size: 12px;
+  background: #ff9966;
+  text-decoration: none;
+  padding: 5px 10px 5px 10px;
+}
+
+#startBtn, #stopBtn {
   color: #ffffff;
   font-size: 50px;
-  background: #3498db;
   padding: 10px 100px 10px 100px;
   text-decoration: none;
 }
