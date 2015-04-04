@@ -57,9 +57,9 @@ setInterval(tick, 1000);
 tick();
 
 function tick(){
-    var d = new Date();
-    $('#timer').text(date2str(d));
     if (running) {
+        var d = new Date();
+        $('#timer').text(date2str(d));
         $('#totalCount').text(ms2str(totalCount + (d - stDate)));
     }
 }
@@ -67,11 +67,11 @@ function tick(){
 function startTimer() {
     stDate = new Date();
     $('#startTime').text(date2str(stDate));
+    running = true;
     tick();
     $('#count').show();
     $('#stopBtn').show();
     $('#startBtn').hide();
-    running = true;
     localStorage['stDate'] = +stDate;
     return false;
 }
