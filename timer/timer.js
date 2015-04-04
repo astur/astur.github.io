@@ -1,5 +1,14 @@
 $(window).load(function(){
 
+var $startBtn = $('#startBtn');
+var $stopBtn = $('#stopBtn');
+var $resetBtn = $('#resetBtn');
+var $totalCount = $('#totalCount');
+var $count = $('#count');
+var $startTime = $('#startTime');
+var $timer = $('#timer');
+var $savedTimes = $('#savedTimes');
+
 if (localStorage.getItem('totalCount') !== null) {
     var totalCount = +localStorage['totalCount'];
 } else {
@@ -9,21 +18,21 @@ if (localStorage.getItem('totalCount') !== null) {
 if (localStorage.getItem('stDate') !== null) {
     var stDate = new Date(+localStorage['stDate']);
     var running = true;
-    $('#stopBtn').show();
-    $('#startBtn').hide();
-    $('#count').show();
-    $('#startTime').text(date2str(stDate));
+    $stopBtn.show();
+    $startBtn.hide();
+    $count.show();
+    $startTime.text(date2str(stDate));
 } else {
     var stDate = new Date();
     var running = false;
-    $('#stopBtn').hide();
-    $('#startBtn').show();
-    $('#count').hide();
-    $('#totalCount').text(ms2str(totalCount));
+    $stopBtn.hide();
+    $startBtn.show();
+    $count.hide();
+    $totalCount.text(ms2str(totalCount));
 };
 
 if (localStorage.getItem('savedTimes') !== null) {
-    $('#savedTimes').html(localStorage['savedTimes']);
+    $savedTimes.html(localStorage['savedTimes']);
 };
 
 $(document).keyup(function(event){
@@ -36,19 +45,19 @@ $(document).keyup(function(event){
     }
 });
 
-$('#startBtn').click(startTimer);
+$startBtn.click(startTimer);
 
-$('#stopBtn').click(stopTimer);
+$stopBtn.click(stopTimer);
 
-$('#resetBtn').click(function(){
+$resetBtn.click(function(){
     running = false;
     totalCount = 0;
     stDate = new Date();
-    $('#stopBtn').hide();
-    $('#startBtn').show();
-    $('#count').hide();
-    $('#totalCount').text('00 sec');
-    $('#savedTimes').empty();
+    $stopBtn.hide();
+    $startBtn.show();
+    $count.hide();
+    $totalCount.text('00 sec');
+    $savedTimes.empty();
     localStorage.clear();
     return false;
 });
@@ -59,36 +68,36 @@ tick();
 function tick(){
     if (running) {
         var d = new Date();
-        $('#timer').text(date2str(d));
-        $('#totalCount').text(ms2str(totalCount + (d - stDate)));
+        $timer.text(date2str(d));
+        $totalCount.text(ms2str(totalCount + (d - stDate)));
     }
 }
 
 function startTimer() {
     stDate = new Date();
-    $('#startTime').text(date2str(stDate));
+    $startTime.text(date2str(stDate));
     running = true;
     tick();
-    $('#count').show();
-    $('#stopBtn').show();
-    $('#startBtn').hide();
+    $count.show();
+    $stopBtn.show();
+    $startBtn.hide();
     localStorage['stDate'] = +stDate;
     return false;
 }
 
 function stopTimer() {
-    $('#count').hide();
+    $count.hide();
     var d = new Date();
     var t = '<p>[<i>' + ms2str(d - stDate) + '</i>] '
            + date2str(stDate)
            + ' - ' + date2str(d) + '</p>';
-    $('#savedTimes').prepend(t);
-    localStorage['savedTimes'] = $('#savedTimes').html();
+    $savedTimes.prepend(t);
+    localStorage['savedTimes'] = $savedTimes.html();
     totalCount += (d - stDate);
     localStorage['totalCount'] = totalCount;
-    $('#totalCount').text(ms2str(totalCount));
-    $('#stopBtn').hide();
-    $('#startBtn').show();
+    $totalCount.text(ms2str(totalCount));
+    $stopBtn.hide();
+    $startBtn.show();
     running = false;
     localStorage.removeItem('stDate');
     return false;
