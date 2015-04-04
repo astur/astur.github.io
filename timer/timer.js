@@ -49,9 +49,7 @@ $('#resetBtn').click(function(){
     $('#count').hide();
     $('#totalCount').text('00 sec');
     $('#savedTimes').empty();
-    localStorage.removeItem('stDate');
-    localStorage.removeItem('savedTimes');
-    localStorage.removeItem('totalCount');
+    localStorage.clear();
     return false;
 });
 
