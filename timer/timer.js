@@ -32,14 +32,20 @@ if (localStorage.getItem('stDate') !== null) {
 };
 
 if (localStorage.getItem('savedTimes') !== null) {
-    $savedTimes.html(localStorage['savedTimes']);
+    var savedTimes = JSON.parse(localStorage['savedTimes']);
+    displaySavedTimes();
+} else {
+    var savedTimes = [];
 };
+
+setInterval(tick, 1000);
+tick();
 
 $(document).keyup(function(event){
     if (event.keyCode == 27 && running) {
         stopTimer();
     }
-    
+
     if (event.keyCode == 13 && !running) {
         startTimer();
     }
@@ -53,6 +59,7 @@ $resetBtn.click(function(){
     running = false;
     totalCount = 0;
     stDate = new Date();
+    savedTimes = [];
     $stopBtn.hide();
     $startBtn.show();
     $count.hide();
@@ -61,9 +68,6 @@ $resetBtn.click(function(){
     localStorage.clear();
     return false;
 });
-
-setInterval(tick, 1000);
-tick();
 
 function tick(){
     if (running) {
@@ -87,20 +91,100 @@ function startTimer() {
 
 function stopTimer() {
     $count.hide();
+    running = false;
     var d = new Date();
-    var t = '<p>[<i>' + ms2str(d - stDate) + '</i>] '
-           + date2str(stDate)
-           + ' - ' + date2str(d) + '</p>';
-    $savedTimes.prepend(t);
-    localStorage['savedTimes'] = $savedTimes.html();
-    totalCount += (d - stDate);
-    localStorage['totalCount'] = totalCount;
-    $totalCount.text(ms2str(totalCount));
+    savedTimes.unshift([+stDate, +d]);
+    localStorage['savedTimes'] = JSON.stringify(savedTimes);
+    displaySavedTimes();
     $stopBtn.hide();
     $startBtn.show();
-    running = false;
     localStorage.removeItem('stDate');
     return false;
+}
+
+function displaySavedTimes() {
+    var p = '';
+    var t = 0;
+    var s = '<div class="stLine h"><span>[<i>%s</i>] %s - %s</span> %s</div>';
+    var a = '<a class="e" href="#">e</a> <a class="x" href="#">x</a>'
+    for(var i=0; i<savedTimes.length; i++) {
+        p = p + sprintf(s, ms2str(savedTimes[i][1] - savedTimes[i][0]),
+            date2str(savedTimes[i][0]), date2str(savedTimes[i][1]), a);
+        t = t + savedTimes[i][1] - savedTimes[i][0];
+    }
+    totalCount = t;
+    localStorage['totalCount'] = totalCount;
+    $totalCount.text(ms2str(totalCount));
+    tick();
+    $savedTimes.html(p);
+    $('.e').click(function() {
+        var $stLine = $(this).parent();
+        $(".stLine").removeClass('h');
+        var n = $(".stLine").index($stLine);
+        var stMin = (n < savedTimes.length - 1) ?
+            savedTimes[n+1][1] :
+            (savedTimes[n][0] - 3600000);
+        var stMax = (n <= 0) ?
+            (running ? stDate : (new Date())) :
+            savedTimes[n-1][0];
+        var sliderMin, sliderMax;
+
+        var s = '<div>' + $stLine.children('span').text() + '</div>';
+        s += '<div id="sliderVals"></div>';
+        s += '<div id="slider"></div>';
+        s += '<div id="sliderRange"></div>';
+        s += '<div><a id="okBtn" href="#">OK</a>';
+        s += '<a id="cancelBtn" href="#">Cancel</a></div>';
+        $stLine.html(s)
+
+        $("#slider").slider({
+            range: true,
+            min: stMin,
+            max: stMax,
+            values: [savedTimes[n][0], savedTimes[n][1]],
+            slide: sliderMove
+        });
+        $('#sliderRange').text(date2str(stMin) + ' <===> ' + date2str(stMax));
+        sliderMove();
+        function sliderMove( e, ui ) {
+            sliderMin = $("#slider").slider("values", 0);
+            sliderMax = $("#slider").slider("values", 1);
+            $("#sliderVals").text(
+                '[' +
+                ms2str(sliderMax - sliderMin) +
+                '] ' +
+                date2str(sliderMin) +
+                " - " +
+                date2str(sliderMax)
+            );
+        }
+
+        $('#okBtn').click(function(){
+            savedTimes[n] = [sliderMin, sliderMax];
+            localStorage['savedTimes'] = JSON.stringify(savedTimes);
+            displaySavedTimes();
+            return false;
+        });
+        $('#cancelBtn').click(function(){
+            displaySavedTimes();
+            return false;
+        });
+        return false;
+    });
+    $('.x').click(function() {
+        var n = $(".stLine").index($(this).parent());
+        savedTimes.splice(n,1);
+        localStorage['savedTimes'] = JSON.stringify(savedTimes);
+        displaySavedTimes();
+        return false;
+    });
+}
+
+function sprintf(f) {
+    for( var i=1; i < arguments.length; i++ ) {
+        f = f.replace(/%s/, arguments[i]);
+    }
+    return f;
 }
 
 function lz(t) {
@@ -108,6 +192,7 @@ function lz(t) {
 }
 
 function date2str(d) {
+    var d = new Date(d);
     return lz(d.getHours()) + ':'
          + lz(d.getMinutes()) + ':'
          + lz(d.getSeconds());

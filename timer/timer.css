@@ -4,12 +4,41 @@
   font-family: Arial, Sans-serif;
 }
 
-p {
+p, .stLine {
   text-align: center;
 }
 
 #savedTimes {
   color: #666666;
+}
+
+.stLine {
+  padding: 15px;
+  margin: 0;
+}
+
+.h:hover {
+  background: #eeffee;
+}
+
+.e, .x {
+    visibility: hidden;
+    text-decoration:none;
+    padding: 5px 10px;
+}
+
+.e {
+    color: #ffffff;
+    background: #009900;
+}
+
+.x {
+    color: #ffffff;
+    background: #ee0000;
+}
+
+.h:hover .e, .h:hover .x {
+    visibility: visible;
 }
 
 #timer, #todayCount {
@@ -23,19 +52,20 @@ p {
   color: #000000;
 }
 
+#startBtn, #stopBtn {
+  color: #ffffff;
+  font-size: 50px;
+  background: #3498db;
+  padding: 10px 100px 10px 100px;
+  text-decoration: none;
+}
+
 #resetBtn {
   color: #ffffff;
   font-size: 12px;
   background: #ff9966;
   text-decoration: none;
   padding: 5px 10px 5px 10px;
-}
-
-#startBtn, #stopBtn {
-  color: #ffffff;
-  font-size: 50px;
-  padding: 10px 100px 10px 100px;
-  text-decoration: none;
 }
 
 #startBtn {
