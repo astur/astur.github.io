@@ -49,7 +49,7 @@ $(document).keyup(function(event){
     if (event.keyCode == 13 && !running) {
         startTimer();
     }
-});
+ });
 
 $startBtn.click(startTimer);
 
@@ -105,11 +105,20 @@ function stopTimer() {
 function displaySavedTimes() {
     var p = '';
     var t = 0;
-    var s = '<div class="stLine h"><span>[<i>%s</i>] %s - %s</span> %s</div>';
-    var a = '<a class="e" href="#">e</a> <a class="x" href="#">x</a>'
+    var s = '<div class="stLine row">';
+    s += '<div class="col-xs-4 text-right">';
+    s += '<span class="badge">%s</span></div>';
+    s += '<div class="col-xs-4 lead text-nowrap">%s - %s</div>';
+    s += '<div class="col-xs-4">';
+    s += '<a class="e btn btn-success btn-xs">';
+    s += '<span class="glyphicon glyphicon-pencil">';
+    s += '</span></a> <a class="x btn btn-danger btn-xs">';
+    s += '<span class="glyphicon glyphicon-remove">';
+    s += '</span></a></div></div>';
+
     for(var i=0; i<savedTimes.length; i++) {
         p = p + sprintf(s, ms2str(savedTimes[i][1] - savedTimes[i][0]),
-            date2str(savedTimes[i][0]), date2str(savedTimes[i][1]), a);
+            date2str(savedTimes[i][0]), date2str(savedTimes[i][1]));
         t = t + savedTimes[i][1] - savedTimes[i][0];
     }
     totalCount = t;
@@ -117,9 +126,9 @@ function displaySavedTimes() {
     $totalCount.text(ms2str(totalCount));
     tick();
     $savedTimes.html(p);
+
     $('.e').click(function() {
-        var $stLine = $(this).parent();
-        $(".stLine").removeClass('h');
+        var $stLine = $(this).parent().parent();
         var n = $(".stLine").index($stLine);
         var stMin = (n < savedTimes.length - 1) ?
             savedTimes[n+1][1] :
@@ -127,40 +136,48 @@ function displaySavedTimes() {
         var stMax = (n <= 0) ?
             (running ? stDate : (new Date())) :
             savedTimes[n-1][0];
-        var sliderMin, sliderMax;
+        var sliderMin = savedTimes[n][0];
+        var sliderMax = savedTimes[n][1];
+        var s = '<div class="col-xs-8 text-center">';
+        s += '<input id="theSlider" type="text" value="" />';
+        s += '</div>';
+        s += '<div class="col-xs-4">';
+        s += '<a id="okBtn" class="btn btn-xs btn-success">';
+        s += '<span class="glyphicon glyphicon-ok">';
+        s += '</span> Ok</a> ';
+        s += '<a id="cancelBtn" class="btn btn-xs btn-danger">';
+        s += '<span class="glyphicon glyphicon-remove">';
+        s += '</span> Cancel</a>';
+        s += '</div>';
 
-        var s = '<div>' + $stLine.children('span').text() + '</div>';
-        s += '<div id="sliderVals"></div>';
-        s += '<div id="slider"></div>';
-        s += '<div id="sliderRange"></div>';
-        s += '<div><a id="okBtn" href="#">OK</a>';
-        s += '<a id="cancelBtn" href="#">Cancel</a></div>';
-        $stLine.html(s)
+        $('.e, .x').hide();
 
-        $("#slider").slider({
-            range: true,
+        $stLine.html(s).addClass('well');
+
+        $("#theSlider").slider({
             min: stMin,
             max: stMax,
-            values: [savedTimes[n][0], savedTimes[n][1]],
-            slide: sliderMove
+            value: [savedTimes[n][0], savedTimes[n][1]],
+            tooltip: 'always',
+            ticks: [stMin, stMax],
+            ticks_labels: [date2str(stMin), date2str(stMax)],
+            formatter: function(value) {
+                if (date2str(value[0]) == date2str(value[1])) {
+                    return 'Delete';
+                };
+                return date2str(value[0]) + ' : ' + date2str(value[1]);
+            }
+        }).on('slide', function(slideEvt) {
+            sliderMin = slideEvt.value[0];
+            sliderMax = slideEvt.value[1];
         });
-        $('#sliderRange').text(date2str(stMin) + ' <===> ' + date2str(stMax));
-        sliderMove();
-        function sliderMove( e, ui ) {
-            sliderMin = $("#slider").slider("values", 0);
-            sliderMax = $("#slider").slider("values", 1);
-            $("#sliderVals").text(
-                '[' +
-                ms2str(sliderMax - sliderMin) +
-                '] ' +
-                date2str(sliderMin) +
-                " - " +
-                date2str(sliderMax)
-            );
-        }
 
         $('#okBtn').click(function(){
-            savedTimes[n] = [sliderMin, sliderMax];
+            if (date2str(sliderMin) == date2str(sliderMax)) {
+                savedTimes.splice(n,1);
+            } else {
+                savedTimes[n] = [sliderMin, sliderMax];
+            };
             localStorage['savedTimes'] = JSON.stringify(savedTimes);
             displaySavedTimes();
             return false;
@@ -172,7 +189,7 @@ function displaySavedTimes() {
         return false;
     });
     $('.x').click(function() {
-        var n = $(".stLine").index($(this).parent());
+        var n = $(".stLine").index($(this).parent().parent());
         savedTimes.splice(n,1);
         localStorage['savedTimes'] = JSON.stringify(savedTimes);
         displaySavedTimes();

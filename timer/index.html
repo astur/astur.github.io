@@ -1,18 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Timer</title>
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-  <link rel="stylesheet" href="timer.css">
-  <script type='text/javascript' src='http://code.jquery.com/jquery-2.1.0.js'></script>
-  <script type='text/javascript' src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-  <script type='text/javascript' src='timer.js'></script>
+    <meta charset="utf-8">
+    <title>Work timer</title>
+    <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap-slider.css">
+    <script type='text/javascript' src='http://code.jquery.com/jquery-2.1.0.js'></script>
+    <script type='text/javascript' src='lib/bootstrap-slider.min.js'></script>
+    <script type='text/javascript' src='timer.js'></script>
 </head>
 <body>
-  <p><a id="startBtn" href="#">Start</a><a id="stopBtn" href="#">Stop</a></p>
-  <p>(Total - <span id="totalCount">00 sec</span>) <a id="resetBtn" href="#">Reset</a></p>
-  <p id="count"><span id="startTime"></span> - <span id="timer"></span></p>
-  <div id="savedTimes"></div>
+    <div class="container">
+        <h1  class="text-center">Work timer
+            <a id="startBtn" class="btn btn-success btn-lg">Start</a>
+            <a id="stopBtn" class="btn btn-danger btn-lg">Stop</a>
+        </h1>
+
+        <h4 class="text-center page-header">
+            (Total - <span id="totalCount"></span>)
+            <a id="resetBtn" class="btn btn-warning btn-xs">Reset</a>
+        </h4>
+
+        <h3 id="count" class="text-center well">
+            <span id="startTime"></span>
+            - <span id="timer"></span>
+        </h3>
+
+        <div id="savedTimes">
+        </div>
+    </div>
 </body>
 </html>
