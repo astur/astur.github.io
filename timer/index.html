@@ -5,9 +5,54 @@
     <title>Work timer</title>
     <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="lib/bootstrap-slider.css">
-    <script type='text/javascript' src='http://code.jquery.com/jquery-2.1.0.js'></script>
-    <script type='text/javascript' src='lib/bootstrap-slider.min.js'></script>
-    <script type='text/javascript' src='timer.js'></script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.0.js"></script>
+    <script type="text/javascript" src="lib/bootstrap-slider.min.js"></script>
+    <script type="text/javascript" src="timer.js"></script>
+    <script id="stLineTemplate" type="text/html">
+        <tr class="stLine active">
+            <td class="text-right"><span class="badge">%s</span></td>
+            <td class="lead text-center">%s - %s</td>
+            <td>
+                <a class="e btn btn-success btn-xs">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+                <a class="x btn btn-danger btn-xs">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </a>
+            </td>
+        </tr>
+    </script>
+    <script id="sliderTemplate" type="text/html">
+        <tr>
+            <td colspan="3">
+                <hr>
+                <div class="row">
+                    <div class="col-xs-8 text-center">
+                        <input id="theSlider" type="text" value="" />
+                    </div>
+                    <div class="col-xs-4">
+                        <a id="okBtn" class="btn btn-xs btn-success">
+                            <span class="glyphicon glyphicon-ok">
+                            </span> Ok</a>
+                        <a id="cancelBtn" class="btn btn-xs btn-danger">
+                            <span class="glyphicon glyphicon-remove">
+                            </span> Cancel</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </script>
+    <script id="periodTemplate" type="text/html">
+        <tr class="prdLine success">
+            <td><span class="badge">%s</span></td>
+            <td>%s - %s</td>
+            <td>
+                <a class="xx btn btn-danger btn-xs">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </a>
+            </td>
+        </tr>
+    </script>
 </head>
 <body>
     <div class="container">
@@ -26,7 +71,17 @@
             - <span id="timer"></span>
         </h3>
 
-        <div id="savedTimes">
+        <div class="row">
+            <div class="col-xs-7 table-responsive">
+                <table class="table">
+                    <tbody id="savedTimes"></tbody>
+                </table>
+            </div>
+            <div class="col-xs-5 table-responsive">
+                <table class="table table-condensed">
+                    <tbody id="savedPeriods"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 </body>
