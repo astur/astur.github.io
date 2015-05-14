@@ -54,9 +54,9 @@ $stopBtn.click(stopTimer);
 $resetBtn.click(function(){
     running = false;
     clearInterval(tickID);
+    savedPeriods.unshift([totalCount, savedTimes[savedTimes.length - 1][0], savedTimes[0][1]]);
     totalCount = 0;
     stDate = new Date();
-    savedPeriods.unshift([savedTimes[savedTimes.length - 1][0], savedTimes[0][1]]);
     displaySavedPeriods();
     savedTimes = [];
     $stopBtn.hide();
@@ -180,8 +180,8 @@ function displaySavedPeriods() {
     var p = '';
     var s = $('#periodTemplate').text();
     for(var i=0; i<savedPeriods.length; i++) {
-        p = p + sprintf(s, ms2str(savedPeriods[i][1] - savedPeriods[i][0]),
-            date2Str(savedPeriods[i][0]), date2Str(savedPeriods[i][1]));
+        p = p + sprintf(s, ms2str(savedPeriods[i][0]),
+            date2Str(savedPeriods[i][1]), date2Str(savedPeriods[i][2]));
     }
     $savedPeriods.html(p);
 
