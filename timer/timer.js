@@ -10,25 +10,17 @@ var $timer = $('#timer');
 var $savedTimes = $('#savedTimes');
 var $savedPeriods = $('#savedPeriods');
 
-var totalCount, stDate, running, savedTimes, savedPeriods, tickID;
+var totalCount, tickID;
 
-savedTimes = localStorage.getItem('savedTimes') !== null ?
-    JSON.parse(localStorage['savedTimes']) : [];
+var _so = new StoredObj('WorkTimer', {savedTimes: [], savedPeriods: [], stDate: false});
 
-savedPeriods = localStorage.getItem('savedPeriods') !== null ?
-    JSON.parse(localStorage['savedPeriods']) : [];
-
-if (localStorage.getItem('stDate') !== null) {
-    stDate = new Date(+localStorage['stDate']);
-    running = true;
+if (_so.stDate) {
     $stopBtn.show();
     $startBtn.hide();
     $count.show();
     tickID = setInterval(tick, 100);
-    $startTime.text(date2str(stDate));
+    $startTime.text(date2str(_so.stDate));
 } else {
-    stDate = new Date();
-    running = false;
     $stopBtn.hide();
     $startBtn.show();
     $count.hide();
@@ -38,11 +30,11 @@ displaySavedTimes();
 displaySavedPeriods();
 
 $(document).keyup(function(event){
-    if (event.keyCode == 27 && running) {
+    if (event.keyCode == 27 && _so.stDate) {
         stopTimer();
     }
 
-    if (event.keyCode == 13 && !running) {
+    if (event.keyCode == 13 && !_so.stDate) {
         startTimer();
     }
  });
@@ -52,66 +44,66 @@ $startBtn.click(startTimer);
 $stopBtn.click(stopTimer);
 
 $resetBtn.click(function(){
-    running = false;
     clearInterval(tickID);
-    savedPeriods.unshift([totalCount, savedTimes[savedTimes.length - 1][0], savedTimes[0][1]]);
-    totalCount = 0;
-    stDate = new Date();
+    if (_so.savedTimes.length > 0) {
+        _so.savedPeriods.unshift(
+            [totalCount,
+            _so.savedTimes[_so.savedTimes.length - 1][0],
+            _so.savedTimes[0][1]]
+        );
+    };
+    _so.stDate = false;
+    _so.savedTimes = [];
+    _so.save();
     displaySavedPeriods();
-    savedTimes = [];
+    displaySavedTimes();
+    $count.hide();
     $stopBtn.hide();
     $startBtn.show();
-    $count.hide();
-    displaySavedTimes();
-    localStorage.clear();
-    localStorage['savedPeriods'] = JSON.stringify(savedPeriods);
     return false;
 });
 
 function tick(){
-    var d = new Date();
+    var d = Date.now();
     $timer.text(date2str(d));
-    $totalCount.text(ms2str(totalCount + (d - stDate)));
+    $totalCount.text(ms2str(totalCount + (d - _so.stDate)));
 }
 
 function startTimer() {
-    stDate = new Date();
-    $startTime.text(date2str(stDate));
-    running = true;
+    _so.stDate = Date.now();
+    _so.save();
     tickID = setInterval(tick, 100);
+    $startTime.text(date2str(_so.stDate));
     $count.show();
     $stopBtn.show();
     $startBtn.hide();
-    localStorage['stDate'] = +stDate;
     return false;
 }
 
 function stopTimer() {
-    $count.hide();
-    running = false;
     clearInterval(tickID);
-    var d = new Date();
-    savedTimes.unshift([+stDate, +d]);
-    localStorage['savedTimes'] = JSON.stringify(savedTimes);
+    var d = Date.now();
+    _so.savedTimes.unshift([_so.stDate, d]);
+    _so.stDate = false;
+    _so.save();
     displaySavedTimes();
+    $count.hide();
     $stopBtn.hide();
     $startBtn.show();
-    localStorage.removeItem('stDate');
     return false;
 }
 
 function displaySavedTimes() {
     var p = '';
-    var t = 0;
     var s = $('#stLineTemplate').text();
+    totalCount = 0;
 
-    for(var i=0; i<savedTimes.length; i++) {
-        p = p + sprintf(s, ms2str(savedTimes[i][1] - savedTimes[i][0]),
-            date2str(savedTimes[i][0]), date2str(savedTimes[i][1]));
-        t = t + savedTimes[i][1] - savedTimes[i][0];
+    for(var i=0; i<_so.savedTimes.length; i++) {
+        p = p + sprintf(s, ms2str(_so.savedTimes[i][1] - _so.savedTimes[i][0]),
+            date2str(_so.savedTimes[i][0]), date2str(_so.savedTimes[i][1]));
+        totalCount += (_so.savedTimes[i][1] - _so.savedTimes[i][0]);
     }
-    totalCount = t;
-    if (!running) {
+    if (!_so.stDate) {
         $totalCount.text(ms2str(totalCount));
     };
     $savedTimes.html(p);
@@ -119,14 +111,14 @@ function displaySavedTimes() {
     $('.e').click(function() {
         var $stLine = $(this).closest('.stLine');
         var n = $('.stLine').index($stLine);
-        var stMin = (n < savedTimes.length - 1) ?
-            savedTimes[n+1][1] :
-            (savedTimes[n][0] - 3600000);
+        var stMin = (n < _so.savedTimes.length - 1) ?
+            _so.savedTimes[n+1][1] :
+            (_so.savedTimes[n][0] - 3600000);
         var stMax = (n <= 0) ?
-            (running ? stDate : (new Date())) :
-            savedTimes[n-1][0];
-        var sliderMin = savedTimes[n][0];
-        var sliderMax = savedTimes[n][1];
+            (_so.stDate || Date.now()) :
+            _so.savedTimes[n-1][0];
+        var sliderMin = _so.savedTimes[n][0];
+        var sliderMax = _so.savedTimes[n][1];
         var s = $('#sliderTemplate').text();
 
         $('.e, .x').hide();
@@ -136,7 +128,7 @@ function displaySavedTimes() {
         $('#theSlider').slider({
             min: stMin,
             max: stMax,
-            value: [savedTimes[n][0], savedTimes[n][1]],
+            value: [_so.savedTimes[n][0], _so.savedTimes[n][1]],
             tooltip: 'always',
             ticks: [stMin, stMax],
             ticks_labels: [date2str(stMin), date2str(stMax)],
@@ -153,11 +145,11 @@ function displaySavedTimes() {
 
         $('#okBtn').click(function(){
             if (date2str(sliderMin) == date2str(sliderMax)) {
-                savedTimes.splice(n,1);
+                _so.savedTimes.splice(n,1);
             } else {
-                savedTimes[n] = [sliderMin, sliderMax];
+                _so.savedTimes[n] = [sliderMin, sliderMax];
             };
-            localStorage['savedTimes'] = JSON.stringify(savedTimes);
+            _so.save();
             displaySavedTimes();
             return false;
         });
@@ -169,8 +161,8 @@ function displaySavedTimes() {
     });
     $('.x').click(function() {
         var n = $('.stLine').index($(this).closest('.stLine'));
-        savedTimes.splice(n,1);
-        localStorage['savedTimes'] = JSON.stringify(savedTimes);
+        _so.savedTimes.splice(n,1);
+        _so.save();
         displaySavedTimes();
         return false;
     });
@@ -179,20 +171,16 @@ function displaySavedTimes() {
 function displaySavedPeriods() {
     var p = '';
     var s = $('#periodTemplate').text();
-    for(var i=0; i<savedPeriods.length; i++) {
-        p = p + sprintf(s, ms2str(savedPeriods[i][0]),
-            date2Str(savedPeriods[i][1]), date2Str(savedPeriods[i][2]));
+    for(var i=0; i<_so.savedPeriods.length; i++) {
+        p = p + sprintf(s, ms2str(_so.savedPeriods[i][0]),
+            date2Str(_so.savedPeriods[i][1]), date2Str(_so.savedPeriods[i][2]));
     }
     $savedPeriods.html(p);
-
-    if (!p) {
-        localStorage.removeItem('savedPeriods');
-    };
     
     $('.xx').click(function() {
         var n = $('.prdLine').index($(this).closest('.prdLine'));
-        savedPeriods.splice(n,1);
-        localStorage['savedPeriods'] = JSON.stringify(savedPeriods);
+        _so.savedPeriods.splice(n,1);
+        _so.save();
         displaySavedPeriods();
         return false;
     });
@@ -244,6 +232,25 @@ function ms2str(ms) {
         return lz(hh) + ':' + lz(mm) + ':' + lz(ss);
     }
     return Math.floor(hh / 24) + ' day(s)';
+}
+
+function StoredObj(sn, defs){
+    var storageName = sn === undefined ? 'myStorage' : sn;
+    this.save = function(){
+        localStorage[storageName] = JSON.stringify(this);
+    }
+    if (localStorage.getItem(storageName) !== null) {
+        var inObj = JSON.parse(localStorage[storageName]);
+        for(var key in inObj){
+            this[key] = inObj[key];
+        }
+    }
+    if (typeof defs === 'object') {
+        for(var key in defs){
+            this[key] = this[key] === undefined ? defs[key] : this[key];
+        }
+        this.save();
+    };
 }
 
 });

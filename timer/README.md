@@ -11,9 +11,10 @@ Web-timer is localStorage based, so no any server-side sync is there. And no com
 * __v0.1.0__ "Just works".
 * __v0.1.1__ Bootstrap style.
 * __v0.2.0__ History added & some refactoring.
+* __v0.2.1__ New style of storage
 
 ###TODO:
 
 * Make storage sync with server side
-* Refactoring (one button for _Start/Stop_ etc.)
+* Refactoring
 
