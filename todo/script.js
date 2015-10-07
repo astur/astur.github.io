@@ -1,6 +1,6 @@
 $(function() {
 
-    var items, username;
+    var items;
 
     Parse.initialize(
         "IxOWIIHkx64xXebpyt0fZLL2ZfGjHtbIEcf4vMqN",
@@ -9,7 +9,6 @@ $(function() {
 
     if (Parse.User.current()) {
         items = JSON.parse(Parse.User.current().attributes.todo);
-        username = Parse.User.current().attributes.username;
         showPage();
     } else {
         showPage(true);
@@ -35,8 +34,7 @@ $(function() {
     function saveItems(){
         Parse.User.current().save(
             {
-                todo: JSON.stringify(items), 
-                username: username
+                todo: JSON.stringify(items)
             },
             {
                 success: function(user) {
@@ -93,7 +91,6 @@ $(function() {
         } else {
             $('#authPage').hide();
             $('#appPage').show();
-            $('#userNameLabel').text(username);
             $("#submitBtn").removeAttr("disabled");
             $("#addBtn").attr("disabled", "disabled");
             $('#newItem').val('');
