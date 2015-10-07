@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Parse ToDo</title>
+    <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+    <script src="http://www.parsecdn.com/js/parse-1.2.13.min.js"></script>
+    <script src="script.js"></script>
+    <script id="itemTemplate" type="text/html">
+        <div class="item">
+            <a class="e btn btn-success btn-xs">
+                <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+            <a class="x btn btn-danger btn-xs">
+                <span class="glyphicon glyphicon-remove"></span>
+            </a>
+            <label></label>
+        </div>
+    </script>
+    <script id="editTemplate" type="text/html">
+        <div id="edit">
+            <input value="">
+            <a id="saveBtn" class="btn btn-xs btn-success">
+                <span class="glyphicon glyphicon-ok"></span>
+                Save
+            </a>
+            <a id="cancelBtn" class="btn btn-xs btn-danger">
+                <span class="glyphicon glyphicon-remove"></span>
+                Cancel
+            </a>
+        </div>
+    </script>
+</head>
+<body>
+    <div class="container" id="authPage">
+        <form class="form" id="authForm">
+            <h3 id="formHeading" class="form-heading">Log in</h3>
+            <div class="form-fields">
+                <input id="username" type="text" class="form-control" placeholder="Username" required autofocus>
+                <input id="password" type="password" class="form-control" placeholder="Password" required>
+                <label><input id="newuser" type="checkbox"> New user</label>
+            </div>
+            <div id="authMsg" class="alert-danger">Error!!!</div>
+            <button id="submitBtn" class="form-control btn btn-lg btn-primary btn-block" type="submit">Log in</button>
+        </form>
+    </div>
+    <div class="container" id="appPage">
+        <div class="raw">
+            <div class="col-xs-4">
+                <h3 class="text-center">
+                    <span id="userNameLabel">Username</span>
+                    <a id="logoutBtn" class="btn btn-warning btn-xs">Logout</a>
+                </h3>
+            </div>
+            <div class="col-xs-8">
+                <h2>
+                    ToDo:
+                </h2>
+                <div>
+                    <input id="newItem" placeholder="New task..." type="text" />
+                    <a id="addBtn" class="btn btn-xs btn-success">
+                        <span class="glyphicon glyphicon-ok">
+                    </span> Add</a>
+                </div>
+                <hr />
+                <div id="itemList"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
