@@ -1,0 +1,54 @@
+.cell {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin: 1px;
+    float: left;
+    text-align: center;
+    line-height: 20px;
+    font-style: bold;
+    font-size: 8px;
+}
+
+.empty {
+    background-color: #80a090;
+}
+
+.full {
+    background-color: #30f7A1;
+}
+
+.active {
+    background-color: #60b0Ff;
+}
+
+.hilight {
+    background-color: #ffffff;
+}
+
+.grid {
+    background-color: #182429;
+    padding: 2px;
+}
+
+.left .grid {
+    margin: auto;
+    width: 220px;
+    height: 550px;
+}
+
+.right .grid {
+    width: 154px;
+    height: 154px;
+}
+
+body {
+    padding:50px;
+    background: #d0d0c0;
+    color: #582429;
+}
+
+.left, .right {
+    width: 50%;
+    float: left;
+}
